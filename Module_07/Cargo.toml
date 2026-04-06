@@ -1,0 +1,17 @@
+[package]
+name = "Module_07"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "benchmark"
+path = "src/benchmark.rs"
+
+[lib]
+name = "lib"
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = 3
+
+[dependencies]

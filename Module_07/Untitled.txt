@@ -1,0 +1,187 @@
+Assignment 7 
+
+Assignment: Building a Parallel Version of Quicksort
+
+In this assignment, you will implement a parallel version of Quicksort in Rust using only the standard library.
+
+You will:
+
+build a correct sequential Quicksort,
+extend it into a parallel divide-and-conquer algorithm,
+use Rust’s ownership system and scoped threads to ensure safety,
+evaluate performance and explain tradeoffs.
+⚠️ You may NOT use external crates such as Rayon.
+
+Learning Objectives
+
+By completing this assignment, you should be able to:
+
+implement recursive algorithms in idiomatic Rust,
+safely use parallelism with std::thread::scope,
+reason about task granularity and cutoff thresholds,
+explain when parallelism helps (and when it hurts),
+write and analyze performance experiments.
+Assignment Requirements
+
+Part 1 — Sequential Quicksort
+
+Implement an in-place Quicksort:
+
+pub fn sequential_quicksort<T: Ord>(data: &mut [T])
+Requirements
+
+Must sort correctly for all inputs
+
+Must use in-place partitioning
+
+Must handle:
+
+empty slices
+already sorted data
+reverse sorted data
+duplicate-heavy data
+Part 2 — Parallel Quicksort
+
+Implement:
+
+pub fn parallel_quicksort<T: Ord + Send>(data: &mut [T], cutoff: usize)
+Requirements
+
+Use divide-and-conquer recursion
+
+Use std::thread::scope
+
+After partitioning:
+
+sort left and right halves in parallel (when large enough)
+Use a cutoff threshold
+
+below cutoff → sequential version
+Avoid excessive thread creation
+
+Required Rust Concepts
+
+1. Disjoint Mutable Slices
+
+You will need:
+
+let (left, right) = data.split_at_mut(mid);
+This allows safe parallel mutation.
+
+2. Scoped Threads
+
+Use:
+
+std::thread::scope(|s| {
+    s.spawn(|| { /* work */ });
+});
+This allows borrowing slices safely across threads.
+
+3. Avoid Shared State
+
+❌ Do NOT use:
+
+Mutex
+Arc
+shared global data
+Your algorithm should rely on non-overlapping slices.
+
+Design Expectations
+
+Your parallel algorithm should:
+
+Partition the slice
+Split into two disjoint regions
+Decide whether to parallelize
+Spawn at most one thread per recursion level
+Recurse on both halves
+Benchmarking
+
+You must benchmark both versions.
+
+Input sizes
+
+10,000
+100,000
+1,000,000
+5,000,000
+Input types
+
+random
+sorted
+reverse sorted
+duplicate-heavy
+Measure
+
+execution time
+speedup vs sequential
+
+Questions to Answer in Report
+
+When does parallel Quicksort become faster?
+What cutoff value worked best?
+What happens if cutoff is too small?
+What happens if cutoff is too large?
+Did some inputs perform worse?
+Why does parallelism not always help?
+Report Requirements (2–4 pages)
+
+Section 1 — Algorithm
+
+pivot strategy
+partition strategy
+recursion structure
+Section 2 — Rust Design
+
+why split_at_mut is needed
+why scoped threads are used
+how ownership ensures safety
+Section 3 — Performance
+
+tables and graphs
+cutoff analysis
+discussion of overhead
+Section 4 — Reflection
+
+what makes this idiomatic Rust?
+what were the main challenges?
+
+Constraints
+
+Allowed
+
+Rust standard library
+std::thread
+std::thread::scope
+std::time::Instant
+Not Allowed
+
+Rayon
+Crossbeam
+Tokio
+any external concurrency library
+slice::sort as your implementation
+Deliverables
+
+Place the following into folder named “Assignment07” in your GitHub repository:
+
+Rust project (Cargo)
+source code
+benchmark driver
+README
+PDF report
+Grading
+
+Category	Weight
+Correctness	35%
+Rust Design	25%
+Parallel Design	20%
+Benchmarking	10%
+Report	10%
+Hints
+
+Get sequential version correct first
+Add cutoff before parallelism
+Spawn only one side
+Use recursion carefully
+Test extensively
