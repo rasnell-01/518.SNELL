@@ -1,0 +1,27 @@
+Assignment 06
+
+Problem 1: Purity, sort of
+
+We have shown in lecture a method that allows us to separate an impure function into two functions: a pure function that generates a description of what must be done and impure function that interprets and evaluates that description of the unsafe action. We demonstrated how to use this scheme with Quicksort (as it’s an in-place sort). Do the same in Rust for the insertion sort algorithm.
+
+Problem 2: Option and Floating-Point
+
+Floating point numbers are weird. They have some strange concepts due to representation issues. For example, the idea that you can have values of negative zero and positive zero. The strangest of all is the NaN concept… as there are situations where performing operations on floating point numbers is just not allowed. For example, knowing that the only person who can truly divide by zero is Chuck Norris and being undefined or worse in some cases, the IEEE standard says the result of dividing by zero can be either positive infinity, negative infinity, or NaN
+
+Using the Rust Option types and traits as a guide, write a monad that wraps the Rust floating point type to allow computations to correctly behave should a NaN results arise in a floating-point computation.
+
+A few requirements:
+
+We define a type like this:
+
+SafeFloat::Value(x) means we have a valid floating-point value
+SafeFloat::NaN means a prior computation became invalid
+Then we give it monad-like operations:
+
+unit / constructor: wrap a raw f64
+map: apply a pure function if valid
+and_then / bind: sequence computations that may themselves produce invalid results
+That gives us the usual propagation behavior:
+
+once a computation becomes NaN, the rest of the chain stays invalid
+otherwise, computations continue normally
